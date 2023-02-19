@@ -32,7 +32,7 @@ app.post("/", (req,res) => {
     };
 
     var jsonD = JSON.stringify(data);
-    const url = "https://us13.api.mailchimp.com/3.0/lists/5595b319ecc";
+    const url = "https://us13.api.mailchimp.com/3.0/lists/5595b319ec";
     const ops = {
         method: "POST",
         auth: "tunji1:c5f1611f316828047b10b1960b10c9ae-us13"
@@ -66,7 +66,7 @@ app.post("/failure", (req,res) => {
 });
 
 app.listen(process.env.PORT || 300, () => {
-    console.log(`Port opened`);
+    console.log(`Port opened at ${port}`);
 });
 
 // bc90b9dd74a8867d1961b78ff66e0916-us13
