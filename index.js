@@ -3,7 +3,7 @@ const app = express();
 const https = require('https');
 const bodyParser = require("body-parser");
 //const request = require('request');  
-const port = 300;
+const port = 3000;
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended:true}));
@@ -13,66 +13,69 @@ app.get("/", (req,res) => {
     res.sendFile(__dirname + "/index.html");
 });
 
-
 app.post("/", (req,res) => {
-    const first = req.body.firstName;
-    const last = req.body.secondName;
-    const email = req.body.email;
-    var data = {
+    var firstN = req.body.firstName;
+    var lastN = req.body.secondName;
+    var email = req.body.email;
+    console.log(email + firstN);
+
+    // data to be sent
+    let data = {
         members: [
             {
-                email_address: email,
-                status: "subscribed",
+                email_address:email,
+                STATUS: "suscribed",
                 merge_fields: {
-                    FNAME: first,
-                    LNAME: last
+                    FNAME: firstN,
+                    LNAME: lastN
                 }
             }
         ]
-    };
-
-    var jsonD = JSON.stringify(data);
-    const url = "https://us13.api.mailchimp.com/3.0/lists/5595b319ec";
-    const ops = {
-        method: "POST",
-        auth: "tunji1:c5f1611f316828047b10b1960b10c9ae-us13"
     }
 
-    // http request
-    const request = https.request(url, ops, (resp) => {
-        if (resp.statusCode === 200) {
-            //res.send("succesful");
-            res.sendFile(__dirname + "/success.html");
-            // to redirect from success.html or failure
-            // use res.redirect("/");
-        }
-         else {
-            res.sendFile(__dirname + "/failure.html");
-            //res.redirect("/");
-        }
-        resp.on("data", (data) => {
-            console.log(JSON.parse(data));
-        });
-    });
-    
+    var jsonD = JSON.stringify(data);
 
+    // url that the data will be sent to
+    const url = "https://us13.api.mailchimp.com/3.0/lists/5595b319ec";
+
+    //options on how the data will be sent, it contains datda like method
+    const options = {
+        method: "POST",
+            
+            auth: "tunji:c5f1611f316828047b10b1960b10c9ae-us13"
+    }
+    const request = https.request(url,options, (response) => {
+        if(response.statusCode == 200) {
+            res.sendFile(__dirname + "/success.html");
+        }
+        else {
+            res.sendFile(__dirname + "/failure.html");
+        }
+
+        response.on("data", (data) => {
+            console.log(JSON.parse(data));
+        })
+    })
+
+    // to send the jsonD (stingified data) to the app
     request.write(jsonD);
+
+    // end the request
     request.end();
+    
 });
 
-// to redirect
+
 app.post("/failure", (req,res) => {
     res.redirect("/");
-});
-
-app.listen(process.env.PORT || 300, () => {
+})
+app.listen(port, () => {
     console.log(`Port opened at ${port}`);
 });
 
 // bc90b9dd74a8867d1961b78ff66e0916-us13
 
-
-// audience id: 5595b319ec
+// 5595b319ec
 
 
 // api key: c5f1611f316828047b10b1960b10c9ae-us13
